@@ -6,18 +6,6 @@ plugins {
 allprojects {
     // This can get extracted into a root build.gradle if needed
     ext {
-        getCurrentShortRevision = {
-            // Got from https://github.com/PaperMC/Velocity/blob/dev/3.0.0/build.gradle
-            new ByteArrayOutputStream().withStream { os ->
-                exec {
-                    executable = "git"
-                    args = ["rev-parse", "HEAD"]
-                    standardOutput = os
-                }
-                return os.toString().trim().substring(0, 8)
-            }
-        }
-
         getLatestTag = {
             new ByteArrayOutputStream().withStream { os ->
                 exec {
@@ -42,8 +30,8 @@ allprojects {
     }
 
     try {
-        project.version = "${project.ext.getLatestTag()}-${project.ext.getCurrentCommitCount()}-${project.ext.getCurrentShortRevision()}"
-    } catch(Exception ignored) {
+        project.version = "${project.ext.getLatestTag()}-${project.ext.getCurrentCommitCount()}"
+    } catch (Exception ignored) {
         println('Either git is not set up properly, or there is no tag yet in the repository. Falling back to version \'0\'')
         project.version = '0'
     }
@@ -53,7 +41,7 @@ allprojects {
 repositories {
     mavenCentral()
     maven { url 'https://maven.wispforest.io' } // Owo config
-    maven { url = 'https://maven.kyrptonaught.dev' } // Custom portal api
+    maven { url 'https://maven.kyrptonaught.dev' } // Custom portal api
     maven { url 'https://maven.nucleoid.xyz' } // Custom portal api transitive
 }
 
@@ -69,30 +57,10 @@ dependencies {
     // Owo config
     annotationProcessor modImplementation('io.wispforest:owo-lib:0.9.2+1.19')
 
-//    // Custom portal api
-//    // This is included in the cpa-polymer
-//    //modImplementation 'net.kyrptonaught:customportalapi:0.0.1-beta57-1.19'
-//    //include 'net.kyrptonaught:customportalapi:0.0.1-beta57-1.19'
-//    modImplementation 'net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'
-//    include 'net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'
-//    // Custom portal api polymer (support for vanilla)
-//    // Getting from maven 'net.kyrptonaught:cpa-polymer:1.0.0-1.19' gives an error
-//    //modImplementation 'net.kyrptonaught:cpa-polymer:1.0.0-1.19'
-//    //include 'net.kyrptonaught:cpa-polymer:1.0.0-1.19'
-//    // And the version on github is newer anyways
-//    modImplementation files('lib/cpa-polymer-1.0.0-1.19.jar')
-//    include 'net.kyrptonaught:cpa-polymer:1.0.0-1.19'
-//    modImplementation 'eu.pb4:polymer:0.2.18+1.19.2'
-
     // Custom portal api
-    modImplementation 'net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'
-    include 'net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'
-    modImplementation 'net.kyrptonaught:cpa-polymer:1.0.0-1.19'
-    include 'net.kyrptonaught:cpa-polymer:1.0.0-1.19'
-    modImplementation 'eu.pb4:polymer:0.2.18+1.19.2'
-    include 'eu.pb4:polymer:0.2.18+1.19.2'
-
-    // TODO At some point, clean up the lib directory and remove this part from gitignore
+    modImplementation(include('net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'))
+    modImplementation(include('net.kyrptonaught:cpa-polymer:1.0.0-1.19'))
+    modImplementation(include('eu.pb4:polymer:0.2.18+1.19.2'))
 }
 
 modrinth {
