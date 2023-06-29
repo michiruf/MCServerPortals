@@ -1,6 +1,9 @@
 plugins {
     id 'fabric-loom' version '1.0-SNAPSHOT'
     id 'com.modrinth.minotaur' version '2.+'
+
+    // Awesome plugin to not have to handle the boilerplate code for sourceSets and configurations yourself
+    id 'com.netflix.nebula.facet' version '10.1.2'
 }
 
 allprojects {
@@ -29,6 +32,30 @@ allprojects {
         }
     }
 
+
+    facets {
+        v1_19_2
+        v1_19_3
+    }
+
+    sourceSets {
+        v1_19_2 {
+            compileClasspath += sourceSets.main.output
+            runtimeClasspath += sourceSets.main.output
+        }
+        v1_19_3 {
+            compileClasspath += sourceSets.main.output
+            runtimeClasspath += sourceSets.main.output
+        }
+    }
+
+//    configurations {
+//        v1_19_2Implementation.extendsFrom(implementation)
+//        v1_19_2ModImplementation.extendsFrom(modImplementation)
+//        v1_19_3Implementation.extendsFrom(implementation)
+//        v1_19_3ModImplementation.extendsFrom(modImplementation)
+//    }
+
     try {
         project.version = "${project.ext.getLatestTag()}-${project.ext.getCurrentCommitCount()}"
     } catch (Exception ignored) {
@@ -36,6 +63,22 @@ allprojects {
         project.version = '0'
     }
     project.group = 'michiruf'
+}
+
+task printSourceSetInformation() {
+
+    doLast {
+        sourceSets.each { srcSet ->
+            println "[" + srcSet.name + "]"
+            print "-->Source directories: " + srcSet.allJava.srcDirs + "\n"
+            print "-->Output directories: " + srcSet.output.classesDirs.files + "\n"
+            print "-->Compile classpath:\n"
+            srcSet.compileClasspath.files.each {
+                print "  " + it.path + "\n"
+            }
+            println ""
+        }
+    }
 }
 
 repositories {
@@ -55,7 +98,9 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // Owo config
-    annotationProcessor modImplementation('io.wispforest:owo-lib:0.9.2+1.19')
+    modImplementation(annotationProcessor('io.wispforest:owo-lib:0.9.3+1.19'))
+    v1_19_2Implementation(v1_19_2AnnotationProcessor('io.wispforest:owo-lib:0.9.3+1.19'))
+    v1_19_3Implementation(v1_19_3AnnotationProcessor('io.wispforest:owo-lib:0.9.3+1.19'))
 
     // Custom portal api
     modImplementation(include('net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'))
@@ -67,7 +112,7 @@ modrinth {
     projectId = 'server-portals'
     versionNumber = project.version
     versionType = project.version.contains('SNAPSHOT') ? 'alpha' : 'release'
-    gameVersions = ['1.19.2']
+    gameVersions = ['1.19'] // ['1.19.2']
     loaders = ['fabric']
     dependencies {
         required.project 'fabric-api'

@@ -9,15 +9,14 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.command.argument.ColorArgumentType;
 import net.minecraft.command.argument.ItemStackArgumentType;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -120,8 +119,8 @@ public class Command {
 
         var portal = new PortalRegistrationData(
                 index,
-                Registry.BLOCK.getId(frameBlock.getBlockState().getBlock()).toString(),
-                Registry.ITEM.getId(lightWith.getItem()).toString(),
+                Registries.BLOCK.getId(frameBlock.getBlockState().getBlock()).toString(),
+                Registries.ITEM.getId(lightWith.getItem()).toString(),
                 color.getColorValue() != null ? color.getColorValue() : 0,
                 command);
         // Save must be trigger manually here, because it is a list and cannot observe changes (even when calling
