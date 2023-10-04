@@ -35,11 +35,6 @@ public class ServerPortalsMod implements DedicatedServerModInitializer, ClientMo
     }
 
     private void registerPluginHooks() {
-        LOGGER.debug("This is a debug message");
-        LOGGER.info("This is an info message");
-        LOGGER.warn("This is a warning message");
-        LOGGER.error("This is an error message");
-
         CommandRegistrationCallback.EVENT.register(Command::registerCommands);
         if (CONFIG.portals() != null)
             registerPortals();
@@ -63,7 +58,6 @@ public class ServerPortalsMod implements DedicatedServerModInitializer, ClientMo
 
     private String parseCommand(String command, Entity entity) {
         // String replacedString = command.replace("%PLAYERNAME%", entity.getDisplayName().toString());
-        LOGGER.debug("Sup");
         return command.replace("%PLAYERNAME%", entity.getName().getString());
     }
 
