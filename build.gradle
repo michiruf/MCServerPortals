@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.4-SNAPSHOT'
     id 'com.modrinth.minotaur' version '2.+'
 }
 
@@ -55,19 +55,19 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // Owo config
-    annotationProcessor modImplementation('io.wispforest:owo-lib:0.9.2+1.19')
+    annotationProcessor modImplementation('io.wispforest:owo-lib:0.11.1+1.20')
 
     // Custom portal api
-    modImplementation(include('net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'))
-    modImplementation(include('net.kyrptonaught:cpa-polymer:1.0.0-1.19'))
-    modImplementation(include('eu.pb4:polymer:0.2.18+1.19.2'))
+    modImplementation(include('net.kyrptonaught:customportalapi:0.0.1-beta64-1.20'))
+    // modImplementation(include('net.kyrptonaught:cpa-polymer:1.0.0-1.20'))
+    modImplementation(include('eu.pb4:polymer-core:0.5.0-rc.3+1.20'))
 }
 
 modrinth {
     projectId = 'server-portals'
     versionNumber = project.version
     versionType = project.version.contains('SNAPSHOT') ? 'alpha' : 'release'
-    gameVersions = ['1.19.2']
+    gameVersions = ['1.20']
     loaders = ['fabric']
     dependencies {
         required.project 'fabric-api'

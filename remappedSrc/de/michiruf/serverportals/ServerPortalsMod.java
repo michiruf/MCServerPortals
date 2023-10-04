@@ -7,7 +7,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.kyrptonaught.customportalapi.api.CustomPortalBuilder;
 import net.kyrptonaught.customportalapi.util.SHOULDTP;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Identifier;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.CommandManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,11 +36,6 @@ public class ServerPortalsMod implements DedicatedServerModInitializer, ClientMo
     }
 
     private void registerPluginHooks() {
-        LOGGER.debug("This is a debug message");
-        LOGGER.info("This is an info message");
-        LOGGER.warn("This is a warning message");
-        LOGGER.error("This is an error message");
-
         CommandRegistrationCallback.EVENT.register(Command::registerCommands);
         if (CONFIG.portals() != null)
             registerPortals();
@@ -51,20 +47,13 @@ public class ServerPortalsMod implements DedicatedServerModInitializer, ClientMo
             CustomPortalBuilder.beginPortal()
                     .frameBlock(portal.frameBlock())
                     .lightWithItem(portal.lightWithItem())
-                    .destDimID(new Identifier("the_nether"))
                     .tintColor(portal.color())
                     .registerBeforeTPEvent(entity -> {
-                        executeCommand(entity, parseCommand(portal.command(), entity));
+                        executeCommand(entity, portal.command());
                         return SHOULDTP.CANCEL_TP;
                     })
                     .registerPortal();
         }
-    }
-
-    private String parseCommand(String command, Entity entity) {
-        // String replacedString = command.replace("%PLAYERNAME%", entity.getDisplayName().toString());
-        LOGGER.debug("Sup");
-        return command.replace("%PLAYERNAME%", entity.getName().getString());
     }
 
     private void executeCommand(Entity entity, String command) {

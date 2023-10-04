@@ -6,14 +6,16 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import de.michiruf.serverportals.config.PortalRegistrationData;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.argument.BlockStateArgument;
 import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.command.argument.ColorArgumentType;
+import net.minecraft.command.argument.ItemStackArgument;
 import net.minecraft.command.argument.ItemStackArgumentType;
-import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-
+import net.minecraft.util.Formatting;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -118,13 +120,10 @@ public class Command {
             return 2;
         }
 
-        // Registry.BLOCK.getId(frameBlock.getBlockState().getBlock()).toString(),
-        // Registry.ITEM.getId(lightWith.getItem()).toString(),
-
         var portal = new PortalRegistrationData(
                 index,
-                Registries.BLOCK.getId(frameBlock.getBlockState().getBlock()).toString(),
-                Registries.ITEM.getId(lightWith.getItem()).toString(),
+                Registry.BLOCK.getId(frameBlock.getBlockState().getBlock()).toString(),
+                Registry.ITEM.getId(lightWith.getItem()).toString(),
                 color.getColorValue() != null ? color.getColorValue() : 0,
                 command);
         // Save must be trigger manually here, because it is a list and cannot observe changes (even when calling

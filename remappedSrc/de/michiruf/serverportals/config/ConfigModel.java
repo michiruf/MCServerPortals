@@ -9,6 +9,7 @@ import java.util.List;
  * @since 2022-12-02
  */
 @Config(name = "server-portals", wrapperName = "Config")
+@SuppressWarnings("unused")
 public class ConfigModel {
 
     public int logLevel; // TODO Use this
