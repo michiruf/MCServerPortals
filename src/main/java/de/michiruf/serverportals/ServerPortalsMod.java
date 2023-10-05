@@ -11,6 +11,8 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static net.minecraft.util.math.random.RandomSeed.getSeed;
+
 /**
  * @author Michael Ruf
  * @since 2022-11-29
@@ -57,8 +59,11 @@ public class ServerPortalsMod implements DedicatedServerModInitializer, ClientMo
     }
 
     private String parseCommand(String command, Entity entity) {
-        // String replacedString = command.replace("%PLAYERNAME%", entity.getDisplayName().toString());
-        return command.replace("%PLAYERNAME%", entity.getName().getString());
+        command = command.replace("%PLAYERNAME%", entity.getName().getString());
+        command = command.replace("%PLAYERUUID%", entity.getUuid().toString());
+        command = command.replace("%PLAYERPOS%", entity.getPos().toString());
+        command = command.replace("%PLAYERSERVER%", "Server IP: " + entity.getServer().getServerIp().toString() + ", Server MOTD: " + entity.getServer().getServerMotd() + ", Server Version: " + entity.getServer().getVersion() + ", Player Count: " + entity.getServer().getCurrentPlayerCount() + "/" + entity.getServer().getMaxPlayerCount());
+        return command;
     }
 
     private void executeCommand(Entity entity, String command) {
