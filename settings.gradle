@@ -8,6 +8,6 @@ pluginManagement {
     }
 }
 
-include ':common'
-include ':v1_19'
-include ':v1_19_3'
+rootProject.name = 'server-portals'
+include 'common'
+include 'v1_19_3'

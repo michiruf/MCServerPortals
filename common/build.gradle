@@ -1,0 +1,38 @@
+plugins {
+    id 'fabric-loom' version '1.4-SNAPSHOT'
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.wispforest.io' } // Owo config
+    maven { url 'https://maven.kyrptonaught.dev' } // Custom portal api
+    maven { url 'https://maven.nucleoid.xyz' } // Custom portal api transitive
+}
+
+dependencies {
+    minecraft 'com.mojang:minecraft:1.19.3'
+    mappings 'net.fabricmc:yarn:1.19.3+build.5:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.14.9'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.72.0+1.19.3'
+
+    // Owo config
+    compileOnly 'io.wispforest:owo-lib:0.9.3+1.19'
+    compileOnly 'io.wispforest:owo-lib:0.9.3+1.19'
+
+    // Custom portal api
+    compileOnly 'net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'
+    compileOnly 'net.kyrptonaught:cpa-polymer:1.0.0-1.19'
+    compileOnly 'eu.pb4:polymer:0.2.18+1.19.2'
+}
+
+def targetJavaVersion = 17
+tasks.withType(JavaCompile).configureEach {
+    // ensure that the encoding is set to UTF-8, no matter what the system default is
+    // this fixes some edge cases with special characters not displaying correctly
+    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+    // If Javadoc is generated, this must be specified in that task too.
+    it.options.encoding = "UTF-8"
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        it.options.release = targetJavaVersion
+    }
+}
