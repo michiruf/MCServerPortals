@@ -1,28 +1,47 @@
 plugins {
-    id 'fabric-loom' version '1.4-SNAPSHOT'
+    id 'idea'
+    id 'java'
+    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
 }
 
 repositories {
     mavenCentral()
+//    maven { url 'https://libraries.minecraft.net' } // Minecraft
+    maven { url 'https://maven.fabricmc.net' } // Fabric loader
     maven { url 'https://maven.wispforest.io' } // Owo config
     maven { url 'https://maven.kyrptonaught.dev' } // Custom portal api
     maven { url 'https://maven.nucleoid.xyz' } // Custom portal api transitive
 }
 
+base {
+    archivesName = "${rootProject.name}-common-${minecraft_version}"
+}
+
+minecraft {
+    version('1.19.2')
+}
+
 dependencies {
-    minecraft 'com.mojang:minecraft:1.19.3'
-    mappings 'net.fabricmc:yarn:1.19.3+build.5:v2'
-    modImplementation 'net.fabricmc:fabric-loader:0.14.9'
-    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.72.0+1.19.3'
+//    // Minecraft
+//    compileOnly 'com.mojang:brigadier:1.0.18'
+    // Minecraft Sponge
+    compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
+
+    // Fabric loader
+    compileOnly 'net.fabricmc:fabric-loader:0.14.9'
+    compileOnly 'net.fabricmc.fabric-api:fabric-api:0.72.0+1.19.3'
 
     // Owo config
-    compileOnly 'io.wispforest:owo-lib:0.9.3+1.19'
-    compileOnly 'io.wispforest:owo-lib:0.9.3+1.19'
+    implementation 'io.wispforest:owo-lib:0.9.3+1.19'
+    annotationProcessor 'io.wispforest:owo-lib:0.9.3+1.19'
 
     // Custom portal api
     compileOnly 'net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'
     compileOnly 'net.kyrptonaught:cpa-polymer:1.0.0-1.19'
     compileOnly 'eu.pb4:polymer:0.2.18+1.19.2'
+
+    // Security
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 }
 
 def targetJavaVersion = 17

@@ -5,9 +5,20 @@ pluginManagement {
             url = 'https://maven.fabricmc.net/'
         }
         gradlePluginPortal()
+
+        // For sponge snapshot plugin 'org.spongepowered.gradle.vanilla'
+        // Got from: https://github.com/jaredlll08/MultiLoader-Template/blob/1.20.2/settings.gradle
+        maven {
+            name = 'Sponge'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
     }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
 }
 
 rootProject.name = 'server-portals'
 include 'common'
-include 'v1_19_3'
+include 'v1.19.3'
