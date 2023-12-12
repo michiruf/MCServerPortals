@@ -7,6 +7,7 @@ pluginManagement {
         gradlePluginPortal()
 
         // For sponge snapshot plugin 'org.spongepowered.gradle.vanilla'
+        // NOTE May remove this if unused
         // Got from: https://github.com/jaredlll08/MultiLoader-Template/blob/1.20.2/settings.gradle
         maven {
             name = 'Sponge'
@@ -15,10 +16,10 @@ pluginManagement {
     }
 }
 
-plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
-}
-
 rootProject.name = 'server-portals'
 include 'common'
-include 'v1.19.3'
+//include 'v1.19.3'
+include 'v1.19.0_sponge'
+include 'v1.19.1_sponge'
+include 'v1.19.2_sponge'
+include 'v1.19.3_sponge'

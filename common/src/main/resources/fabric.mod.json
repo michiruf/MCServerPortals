@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "server-portals",
+  "version": "${version}",
+  "name": "ServerPortals",
+  "description": "",
+  "authors": [
+    "michiruf"
+  ],
+  "contact": {
+    "website": "https://github.com/michiruf"
+  },
+  "license": "MIT",
+  "icon": "assets/serverportals/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "server": [
+      "de.michiruf.serverportals.ServerPortalsMod"
+    ],
+    "client": [
+      "de.michiruf.serverportals.ServerPortalsMod"
+    ]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.12.12",
+    "fabric": "*",
+    "minecraft": ">=1.19",
+    "owo-lib": ">=0.8.5"
+  }
+}

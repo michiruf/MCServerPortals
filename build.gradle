@@ -33,4 +33,8 @@ allprojects {
     project.group = 'michiruf'
     // TODO
     //project.archivesBaseName = 'server-portals'
+    // Inside project:
+//    base {
+//        archivesName = "${rootProject.name}-common-${minecraft_version}"
+//    }
 }

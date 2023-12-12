@@ -5,11 +5,11 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import de.michiruf.serverportals.config.PortalRegistrationData;
+import de.michiruf.serverportals.versioned.VersionedRegistryAccess;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.BlockStateArgumentType;
 import net.minecraft.command.argument.ColorArgumentType;
 import net.minecraft.command.argument.ItemStackArgumentType;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -32,8 +32,6 @@ import java.util.stream.Collectors;
  * @since 2022-12-03
  */
 public class Command {
-
-    private static final Map<String, Supplier<?>> commands = new HashMap<>();
 
     public static void registerCommands(CommandDispatcher<ServerCommandSource> dispatcher,
                                         CommandRegistryAccess registry,
@@ -119,8 +117,8 @@ public class Command {
 
         var portal = new PortalRegistrationData(
                 index,
-                Registries.BLOCK.getId(frameBlock.getBlockState().getBlock()).toString(),
-                Registries.ITEM.getId(lightWith.getItem()).toString(),
+                VersionedRegistryAccess.block().getId(frameBlock.getBlockState().getBlock()).toString(),
+                VersionedRegistryAccess.item().getId(lightWith.getItem()).toString(),
                 color.getColorValue() != null ? color.getColorValue() : 0,
                 command);
         // Save must be trigger manually here, because it is a list and cannot observe changes (even when calling
