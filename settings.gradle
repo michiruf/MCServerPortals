@@ -17,4 +17,3 @@ pluginManagement {
 }
 
 rootProject.name = 'server-portals'
-include 'common'

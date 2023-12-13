@@ -23,9 +23,9 @@
   },
   "mixins": [],
   "depends": {
-    "fabricloader": ">=0.12.12",
+    "minecraft": ">=${minecraft}",
+    "fabricloader": ">=${fabric}",
     "fabric": "*",
-    "minecraft": ">=1.19",
     "owo-lib": ">=0.8.5"
   }
 }
