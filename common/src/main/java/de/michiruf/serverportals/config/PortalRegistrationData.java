@@ -1,11 +1,9 @@
 package de.michiruf.serverportals.config;
 
+import de.michiruf.serverportals.versioned.VersionedRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import de.michiruf.serverportals.versioned.VersionedRegistryAccess;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.level.block.Block;
 
 /**
  * @author Michael Ruf
@@ -38,12 +36,11 @@ public final class PortalRegistrationData {
     }
 
     public Block frameBlock() {
-        return VersionedRegistryAccess.block().get(new ResourceLocation(frameBlockId));
-        return VersionedRegistryAccess.block().get(new Identifier(frameBlockId));
+        return VersionedRegistry.block().get(new Identifier(frameBlockId));
     }
 
     public Item lightWithItem() {
-        return VersionedRegistryAccess.item().get(new Identifier(lightWithItemId));
+        return VersionedRegistry.item().get(new Identifier(lightWithItemId));
     }
 
     public String index() {

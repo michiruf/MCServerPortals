@@ -5,6 +5,7 @@ import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.kyrptonaught.customportalapi.api.CustomPortalBuilder;
 import net.kyrptonaught.customportalapi.util.SHOULDTP;
+import net.minecraft.entity.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

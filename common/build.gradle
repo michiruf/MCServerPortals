@@ -1,3 +1,5 @@
+import de.michiruf.gradle.findversion.FindVersion
+
 plugins {
     id 'java'
     // Unfortunately, in higher versions of fabric-loom, multiple submodules do not work
@@ -14,48 +16,56 @@ repositories {
 
 // Check minecraft, mappings, fabric and fabricApi on: https://modmuss50.me/fabric.html
 def minecraftVersionDefinitions = [
+        '1.19': [
+                minecraft        : '1.19',
+                mappings         : '1.19+build.4',
+                fabric           : '0.15.0',
+                fabricApi        : '0.58.0+1.19',
+                supportedVersions: ['1.19']
+        ],
         '1.19.1': [
                 minecraft        : '1.19.1',
                 mappings         : '1.19.1+build.6',
                 fabric           : '0.15.0',
                 fabricApi        : '0.58.5+1.19.1',
-                supportedVersions: ['1.19.1'],
-                versionedRegistryAccess: 'v1.19.1_sponge'
+                supportedVersions: ['1.19.1']
         ],
         '1.19.2': [
-                minecraft: '1.19.2',
-                mappings : '1.19.2+build.28',
-                fabric   : '0.15.0',
-                fabricApi: '0.77.0+1.19.2',
-                supportedVersions: ['1.19.2'],
-                versionedRegistryAccess: 'v1.19.2_sponge'
+                minecraft        : '1.19.2',
+                mappings         : '1.19.2+build.28',
+                fabric           : '0.15.0',
+                fabricApi        : '0.77.0+1.19.2',
+                supportedVersions: ['1.19.2']
         ],
         '1.19.3': [
-                minecraft: '1.19.3',
-                mappings : '1.19.3+build.5',
-                fabric   : '0.15.0',
-                fabricApi: '0.76.1+1.19.3',
-                supportedVersions: ['1.19.3'],
-                versionedRegistryAccess: 'v1.19.3_sponge'
+                minecraft        : '1.19.3',
+                mappings         : '1.19.3+build.5',
+                fabric           : '0.15.0',
+                fabricApi        : '0.76.1+1.19.3',
+                supportedVersions: ['1.19.3']
         ]
 ]
-var minecraftVersion = '1.19.1';
+var minecraftVersion = '1.19';
 var minecraftVersionDefinition = minecraftVersionDefinitions[minecraftVersion]
+
+sourceSets {
+    main {
+        java {
+            srcDirs = [
+                    'src/main/java',
+                    "src/registry/${FindVersion.findClosestLowerOrEqualVersionInDirectory(file('src/registry'), minecraftVersion)}",
+                    "src/message/${FindVersion.findClosestLowerOrEqualVersionInDirectory(file('src/message'), minecraftVersion)}"
+            ]
+        }
+    }
+}
 
 dependencies {
     // Minecraft and fabric
     minecraft "com.mojang:minecraft:${minecraftVersionDefinition['minecraft']}"
-    //mappings "net.fabricmc:yarn:${minecraftVersionDefinition['mappings']}:v2"
-    // It is necessary to use officialMojangMappings, since it (as least) looks like
-    // sponge is doing the same in the respective submodules
-    // In the case it should be possible to go back to sourceSets, this should not be
-    // needed anymore
-    mappings loom.officialMojangMappings()
+    mappings "net.fabricmc:yarn:${minecraftVersionDefinition['mappings']}:v2"
     modImplementation "net.fabricmc:fabric-loader:${minecraftVersionDefinition['fabric']}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${minecraftVersionDefinition['fabricApi']}"
-
-    // Versioned subprojects
-    implementation(include(project(path: ":${minecraftVersionDefinition['versionedRegistryAccess']}")))
 
     // Owo config
     modImplementation(annotationProcessor('io.wispforest:owo-lib:0.9.3+1.19'))
