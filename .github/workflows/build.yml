@@ -6,19 +6,14 @@ on:
     tags:
       - '*'
 
-env:
-  # For any reason, specifying this in the modrinth step does not work?
-  # But it is also well documented here, so this should be ok to do
-  MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ['1.19', '1.19.1', '1.19.2', '1.19.3', '1.19.4', '1.20', '1.20.1', '1.20.2']
+      fail-fast: true
     steps:
-      - name: Check tag condition or manual request of build
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
-        run: echo "Ref is a tag or this build was requested manually"
-
       - name: Check out project
         if: success()
         uses: actions/checkout@v3
@@ -38,44 +33,36 @@ jobs:
         with:
           gradle-version: 8.3
 
-      - name: Build v1.19
+      - name: Build
         if: success()
-        run: gradle remapJar -Pv=1.19
+        run: gradle remapJar -Pv=${{ matrix.version }}
 
-      - name: Build v1.19.1
+      - name: Upload artifact
         if: success()
-        run: gradle remapJar -Pv=1.19.1
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.version }}
+          path: |
+            **/libs/server-portals-*.jar
 
-      - name: Build v1.19.2
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check out metadata
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            README.md
+            CHANGELOG.md
+            LICENSE
+
+      - name: Download artifacts
         if: success()
-        run: gradle remapJar -Pv=1.19.2
+        uses: actions/download-artifact@v3
 
-      - name: Build v1.19.3
-        if: success()
-        run: gradle remapJar -Pv=1.19.3
-
-      - name: Build v1.19.4
-        if: success()
-        run: gradle remapJar -Pv=1.19.4
-
-      - name: Build v1.20
-        if: success()
-        run: gradle remapJar -Pv=1.20
-
-      - name: Build v1.20.1
-        if: success()
-        run: gradle remapJar -Pv=1.20.1
-
-      - name: Build v1.20.2
-        if: success()
-        run: gradle remapJar -Pv=1.20.2
-
-      - name: Check tag condition before release
-        if: success() && startsWith(github.ref, 'refs/tags/')
-        run: echo "Ref is a tag"
-
-      - name: Release on GitHub
-        if: success()
+      - name: Release on github
+        if: success() # No git tag check, since action-gh-release fails if not valid
         uses: softprops/action-gh-release@v1
         with:
           files: |
@@ -88,34 +75,57 @@ jobs:
           prerelease: false
           fail_on_unmatched_files: true
 
-      - name: Upload to modrinth v1.19
-        if: success()
-        run: gradle modrinth -Pv=1.19
+  publish:
+    runs-on: ubuntu-latest
+    needs: release
+    strategy:
+      matrix:
+        version: ['1.19', '1.19.1', '1.19.2', '1.19.3', '1.19.4', '1.20', '1.20.1', '1.20.2']
+      fail-fast: true
+    steps:
+      - name: Check out metadata
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            CHANGELOG.md
 
-      - name: Upload to modrinth v1.19.1
+      - name: Download artifact
         if: success()
-        run: gradle modrinth -Pv=1.19.1
+        uses: actions/download-artifact@v3
+        with:
+          name: build-${{ matrix.version }}
 
-      - name: Upload to modrinth v1.19.2
-        if: success()
-        run: gradle modrinth -Pv=1.19.2
+      - name: Publish on modrinth
+        if: success() && startsWith(github.ref, 'refs/tags/') # Failsafe check
+        # See https://github.com/Kir-Antipov/mc-publish
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: server-portals
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: false
+          files: |
+            **/libs/server-portals-*.jar
+          name: Server Portals ${{ github.ref_name }}
+          version: ${{ github.ref_name }}+${{ matrix.version }}
+          version-type: "${{ contains(github.ref_name, 'SNAPSHOT') && 'alpha' || 'release' }}"
+          changelog-file: CHANGELOG.md
+          #loaders: fabric
+          game-versions: "=${{ matrix.version }}"
+          #dependencies:
 
-      - name: Upload to modrinth v1.19.3
-        if: success()
-        run: gradle modrinth -Pv=1.19.3
+  publish_readme:
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+      - name: Check out metadata
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            README.md
 
-      - name: Upload to modrinth v1.19.4
+      - name: Update readme
         if: success()
-        run: gradle modrinth -Pv=1.19.4
-
-      - name: Upload to modrinth v1.20
-        if: success()
-        run: gradle modrinth -Pv=1.20
-
-      - name: Upload to modrinth v1.20.1
-        if: success()
-        run: gradle modrinth -Pv=1.20.1
-
-      - name: Upload to modrinth v1.20.2
-        if: success()
-        run: gradle modrinth -Pv=1.20.2
+        run: |
+          readme="$(sed 's/\\/\\\\/g; s/"/\\"/g; s/$/\\n/' README.md)"
+          json="{ \"body\": \"$readme\" }"
+          echo "$json" | curl -XPATCH -H "Authorization: ${{ secrets.MODRINTH_TOKEN }}" -H "Content-type: application/json" -d @- 'https://api.modrinth.com/v2/project/server-portals'

@@ -3,7 +3,6 @@ import de.michiruf.gradle.findversion.FindVersion
 plugins {
     id 'java'
     id 'fabric-loom' version '1.4-SNAPSHOT'
-    id 'com.modrinth.minotaur' version '2.+'
 }
 
 apply from: 'build.allprojects.gradle'
@@ -46,28 +45,6 @@ dependencies {
     modImplementation include("net.kyrptonaught:customportalapi:${minecraftVersionDefinition['customportalapi']}") { exclude group: 'net.fabricmc.fabric-api' }
     modImplementation include("eu.pb4:${minecraftVersionDefinition['polymer']}") { exclude group: 'net.fabricmc.fabric-api' }
 }
-
-def buildJarFile = file("build/libs/${rootProject.name}-${project.version}.jar")
-modrinth {
-    projectId = rootProject.name
-    versionNumber = project.version
-    versionType = project.version.contains('SNAPSHOT') ? 'alpha' : 'release'
-    gameVersions = [minecraftVersion]
-    loaders = ['fabric']
-    dependencies {
-        required.project 'fabric-api'
-        required.project 'owo-lib'
-    }
-    if(buildJarFile.exists())
-        uploadFile = buildJarFile;
-    else
-        uploadFile = remapJar
-    syncBodyFrom = rootProject.file("README.md").text
-
-    // Use the environment variable `$MODRINTH_TOKEN` for the token
-    // token = 'mySecretToken'
-}
-tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 
 processResources {
     var replaceProperties = [
