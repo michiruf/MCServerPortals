@@ -15,9 +15,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check tag condition
-        if: startsWith(github.ref, 'refs/tags/')
-        run: echo "Ref is a tag"
+      - name: Check tag condition or manual request of build
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        run: echo "Ref is a tag or this build was requested manually"
 
       - name: Check out project
         if: success()
@@ -70,8 +70,12 @@ jobs:
         if: success()
         run: gradle remapJar -Pv=1.20.2
 
+      - name: Check tag condition before release
+        if: success() && startsWith(github.ref, 'refs/tags/')
+        run: echo "Ref is a tag"
+
       - name: Release on GitHub
-        if: success() && startsWith(github.ref, 'refs/tags/') # Failsafe check again
+        if: success()
         uses: softprops/action-gh-release@v1
         with:
           files: |
