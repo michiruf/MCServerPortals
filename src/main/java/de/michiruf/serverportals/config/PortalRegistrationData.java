@@ -1,9 +1,9 @@
 package de.michiruf.serverportals.config;
 
+import de.michiruf.serverportals.versioned.VersionedRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 /**
  * @author Michael Ruf
@@ -36,11 +36,11 @@ public final class PortalRegistrationData {
     }
 
     public Block frameBlock() {
-        return Registry.BLOCK.get(new Identifier(frameBlockId));
+        return VersionedRegistry.block().get(new Identifier(frameBlockId));
     }
 
     public Item lightWithItem() {
-        return Registry.ITEM.get(new Identifier(lightWithItemId));
+        return VersionedRegistry.item().get(new Identifier(lightWithItemId));
     }
 
     public String index() {

@@ -1,0 +1,20 @@
+mc:
+  container_name: mc
+  image: itzg/minecraft-server:java17-alpine
+  ports:
+    - '25565:25565'
+  environment:
+    EULA: 'true'
+    OVERRIDE_SERVER_PROPERTIES: 'true'
+    TYPE: FABRIC
+    VERSION: 1.19.3
+    MODRINTH_PROJECTS: fabric-api,owo-lib
+    MODRINTH_ALLOWED_VERSION_TYPE: alpha
+    USE_AIKAR_FLAGS: 'true'
+    REMOVE_OLD_MODS: 'true'
+  volumes:
+    - 'mc_data:/data/'
+    - '../build/libs/:/mods/'
+    - '/etc/timezone:/etc/timezone:ro'
+  tty: true
+  restart: always

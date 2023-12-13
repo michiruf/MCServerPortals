@@ -1,1 +1,1 @@
-Initial project creation
+Support for MC 1.19 - 1.20.2
