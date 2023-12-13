@@ -1,0 +1,82 @@
+// Check mappings, fabric and fabricApi on: https://modmuss50.me/fabric.html
+// Check owo on: https://maven.wispforest.io/io/wispforest/owo-lib/0.11.2%2B1.20/
+// Check customportalapi on: https://maven.kyrptonaught.dev/
+// Check polymer-core on: https://maven.nucleoid.xyz/eu/pb4/polymer-core/
+ext.minecraftVersionDefinitions = [
+        '1.19'  : [
+                mappings       : '1.19+build.4',
+                fabric         : '0.12.12', // TODO Check this up again?
+                fabricApi      : '0.58.0+1.19',
+                owo            : '0.9.3+1.19',
+                customportalapi: '0.0.1-beta54-1.19', // Does not work: '0.0.1-beta62-1.19' AND '0.0.1-beta63.5-1.19.X'
+                polymer        : 'polymer:0.2.10+1.19'
+        ],
+        '1.19.1': [
+                mappings       : '1.19.1+build.6',
+                fabric         : '0.15.0',
+                fabricApi      : '0.58.5+1.19.1',
+                owo            : '0.9.3+1.19',
+                customportalapi: '0.0.1-beta54-1.19', // Does not work: '0.0.1-beta62-1.19' AND '0.0.1-beta63.5-1.19.X'
+                polymer        : 'polymer:0.2.10+1.19.1'
+        ],
+        '1.19.2': [
+                mappings       : '1.19.2+build.28',
+                fabric         : '0.15.0',
+                fabricApi      : '0.77.0+1.19.2',
+                owo            : '0.9.3+1.19',
+                customportalapi: '0.0.1-beta54-1.19', // Does not work: '0.0.1-beta62-1.19' AND '0.0.1-beta63.5-1.19.X'
+                polymer        : 'polymer:0.2.28+1.19.2'
+        ],
+        '1.19.3': [
+                mappings       : '1.19.3+build.5',
+                fabric         : '0.15.0',
+                fabricApi      : '0.76.1+1.19.3',
+                owo            : '0.9.3+1.19.3',
+                customportalapi: '0.0.1-beta63-1.19.3',
+                polymer        : 'polymer-core:0.3.0+1.19.3'
+        ],
+        '1.19.4': [
+                mappings       : '1.19.4+build.2',
+                fabric         : '0.15.1',
+                fabricApi      : '0.87.2+1.19.4',
+                owo            : '0.10.6+1.19.4', // Theres also 0.11.0 for MC 1.19.4
+                customportalapi: '0.0.1-beta63-1.19.4',
+                polymer        : 'polymer-core:0.4.11+1.19.4'
+        ],
+        '1.20'  : [
+                mappings       : '1.20+build.1',
+                fabric         : '0.15.1',
+                fabricApi      : '0.83.0+1.20',
+                owo            : '0.11.2+1.20',
+                customportalapi: '0.0.1-beta64-1.20', // beta63 also available
+                polymer        : 'polymer-core:0.5.0+1.20'
+        ],
+        '1.20.1': [
+                mappings       : '1.20.1+build.10',
+                fabric         : '0.15.1',
+                fabricApi      : '0.91.0+1.20.1',
+                owo            : '0.11.2+1.20', // No 1.20.1 artifact
+                customportalapi: '0.0.1-beta64-1.20', // No 1.20.1 artifact
+                polymer        : 'polymer-core:0.5.18+1.20.1'
+        ],
+        '1.20.2': [
+                mappings       : '1.20.2+build.4',
+                fabric         : '0.15.1',
+                fabricApi      : '0.89.3+1.20.2', // Newest is '0.91.2+1.20.2', but customportalapi needs older
+                owo            : '0.11.4+1.20.2',
+                customportalapi: '0.0.1-beta64-1.20.2',
+                polymer        : 'polymer-core:0.6.3+1.20.2'
+        ]
+        // NOTE There is no customportalapi after 1.20.2 and since this one needs an older fabric api,
+        // it is probably not worth continuing to newer versions
+]
+
+// Predefine as null to retrieve without checks in build.gradle
+ext.minecraftVersion = null
+
+if (project.hasProperty('v'))
+    ext.minecraftVersion = project.property('v')
+
+def minecraftVersionEnv = System.getenv('minecraft_version') ?: ""
+if (!minecraftVersionEnv.isEmpty())
+    ext.minecraftVersion = minecraftVersionEnv

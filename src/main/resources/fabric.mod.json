@@ -21,7 +21,12 @@
       "de.michiruf.serverportals.ServerPortalsMod"
     ]
   },
-  "mixins": [],
+  "mixins": [
+    {
+      "config": "customportalapi-polymer.mixins.json",
+      "environment": "server"
+    }
+  ],
   "depends": {
     "minecraft": ">=${minecraft}",
     "fabricloader": ">=${fabric}",

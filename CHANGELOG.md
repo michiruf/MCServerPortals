@@ -1,1 +1,1 @@
-Add other versions of minecraft 1.19
+Support for MC 1.19 - 1.20.2

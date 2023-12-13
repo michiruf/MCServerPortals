@@ -36,11 +36,39 @@ jobs:
         if: success()
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 7.4.2
+          gradle-version: 8.3
 
-      - name: Build
+      - name: Build v1.19
         if: success()
-        run: gradle remapJar
+        run: gradle remapJar -Pv=1.19
+
+      - name: Build v1.19.1
+        if: success()
+        run: gradle remapJar -Pv=1.19.1
+
+      - name: Build v1.19.2
+        if: success()
+        run: gradle remapJar -Pv=1.19.2
+
+      - name: Build v1.19.3
+        if: success()
+        run: gradle remapJar -Pv=1.19.3
+
+      - name: Build v1.19.4
+        if: success()
+        run: gradle remapJar -Pv=1.19.4
+
+      - name: Build v1.20
+        if: success()
+        run: gradle remapJar -Pv=1.20
+
+      - name: Build v1.20.1
+        if: success()
+        run: gradle remapJar -Pv=1.20.1
+
+      - name: Build v1.20.2
+        if: success()
+        run: gradle remapJar -Pv=1.20.2
 
       - name: Release on GitHub
         if: success() && startsWith(github.ref, 'refs/tags/') # Failsafe check again
@@ -56,6 +84,34 @@ jobs:
           prerelease: false
           fail_on_unmatched_files: true
 
-      - name: Upload to modrinth
+      - name: Upload to modrinth v1.19
         if: success()
-        run: gradle modrinth
+        run: gradle modrinth -Pv=1.19
+
+      - name: Upload to modrinth v1.19.1
+        if: success()
+        run: gradle modrinth -Pv=1.19.1
+
+      - name: Upload to modrinth v1.19.2
+        if: success()
+        run: gradle modrinth -Pv=1.19.2
+
+      - name: Upload to modrinth v1.19.3
+        if: success()
+        run: gradle modrinth -Pv=1.19.3
+
+      - name: Upload to modrinth v1.19.4
+        if: success()
+        run: gradle modrinth -Pv=1.19.4
+
+      - name: Upload to modrinth v1.20
+        if: success()
+        run: gradle modrinth -Pv=1.20
+
+      - name: Upload to modrinth v1.20.1
+        if: success()
+        run: gradle modrinth -Pv=1.20.1
+
+      - name: Upload to modrinth v1.20.2
+        if: success()
+        run: gradle modrinth -Pv=1.20.2

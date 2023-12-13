@@ -25,7 +25,10 @@ because of that with [Polymer](https://polymer.pb4.eu/).
 
 ## Usage instructions
 
-**NOTE: The server must get restarted to load these changes!**
+<span style="color:darkred;font-weight:bold">
+NOTE: The server must get restarted to load these changes!<br>
+So after every change of the portals, restart the server (unfortunately)!
+</span>
 
 ---
 List configured portals:

@@ -2,133 +2,66 @@ import de.michiruf.gradle.findversion.FindVersion
 
 plugins {
     id 'java'
-    // Unfortunately, in higher versions of fabric-loom, multiple submodules do not work
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.4-SNAPSHOT'
     id 'com.modrinth.minotaur' version '2.+'
 }
 
-allprojects {
-    // This can get extracted into a root build.gradle if needed
-    ext {
-        getLatestTag = {
-            new ByteArrayOutputStream().withStream { os ->
-                exec {
-                    executable = "git"
-                    args = ["describe", "--tags", "--abbrev=0"]
-                    standardOutput = os
-                }
-                return os.toString().trim()
-            }
-        }
+apply from: 'build.allprojects.gradle'
+apply from: 'build.versions.gradle'
 
-        getCurrentCommitCount = {
-            new ByteArrayOutputStream().withStream { os ->
-                exec {
-                    executable = "git"
-                    args = ["rev-list", "--all", "--count"]
-                    standardOutput = os
-                }
-                return os.toString().trim()
-            }
-        }
-    }
+def minecraftVersion = project.minecraftVersion as String ?: '1.20.2'
+def minecraftVersionDefinitions = ext.minecraftVersionDefinitions
+def minecraftVersionDefinition = minecraftVersionDefinitions[minecraftVersion]
+project.version = "${project.version}+${minecraftVersion}"
 
-    try {
-        project.version = "${project.ext.getLatestTag()}-${project.ext.getCurrentCommitCount()}"
-    } catch (Exception ignored) {
-        println('Either git is not set up properly, or there is no tag yet in the repository. Falling back to version \'0\'')
-        project.version = '0'
-    }
-    project.group = 'michiruf'
+sourceSets {
+    main.java.srcDirs = [
+            'src/main/java',
+            "src/registry/${FindVersion.findClosestLowerOrEqualVersionInDirectory(file('src/registry'), minecraftVersion)}",
+            "src/message/${FindVersion.findClosestLowerOrEqualVersionInDirectory(file('src/message'), minecraftVersion)}",
+            "src/customportalapi-polymer/${FindVersion.findClosestLowerOrEqualVersionInDirectory(file('src/customportalapi-polymer'), minecraftVersion)}"
+    ]
 }
 
 repositories {
     mavenCentral()
     maven { url 'https://maven.wispforest.io' } // Owo config
     maven { url 'https://maven.kyrptonaught.dev' } // Custom portal api
-    maven { url 'https://maven.nucleoid.xyz' } // Custom portal api transitive
-}
-
-// Check minecraft, mappings, fabric and fabricApi on: https://modmuss50.me/fabric.html
-def minecraftVersionDefinitions = [
-        '1.19'  : [
-                minecraft        : '1.19',
-                mappings         : '1.19+build.4',
-                fabric           : '0.12.12', // TODO Check this up again?
-                fabricApi        : '0.58.0+1.19',
-                supportedVersions: ['1.19']
-        ],
-        '1.19.1': [
-                minecraft        : '1.19.1',
-                mappings         : '1.19.1+build.6',
-                fabric           : '0.15.0',
-                fabricApi        : '0.58.5+1.19.1',
-                supportedVersions: ['1.19.1']
-        ],
-        '1.19.2': [
-                minecraft        : '1.19.2',
-                mappings         : '1.19.2+build.28',
-                fabric           : '0.15.0',
-                fabricApi        : '0.77.0+1.19.2',
-                supportedVersions: ['1.19.2']
-        ],
-        '1.19.3': [
-                minecraft        : '1.19.3',
-                mappings         : '1.19.3+build.5',
-                fabric           : '0.15.0',
-                fabricApi        : '0.76.1+1.19.3',
-                supportedVersions: ['1.19.3']
-        ]
-]
-var minecraftVersion = '1.19';
-var minecraftVersionDefinition = minecraftVersionDefinitions[minecraftVersion]
-
-sourceSets {
-    main {
-        java {
-            srcDirs = [
-                    'src/main/java',
-                    "src/registry/${FindVersion.findClosestLowerOrEqualVersionInDirectory(file('src/registry'), minecraftVersion)}",
-                    "src/message/${FindVersion.findClosestLowerOrEqualVersionInDirectory(file('src/message'), minecraftVersion)}"
-            ]
-        }
-    }
+    maven { url 'https://maven.nucleoid.xyz' } // Custom portal api transitive (polymer)
+    maven { url 'https://api.modrinth.com/maven' } // Custom portal api transitive (sodium)
 }
 
 dependencies {
     // Minecraft and fabric
-    minecraft "com.mojang:minecraft:${minecraftVersionDefinition['minecraft']}"
+    minecraft "com.mojang:minecraft:${minecraftVersion}"
     mappings "net.fabricmc:yarn:${minecraftVersionDefinition['mappings']}:v2"
     modImplementation "net.fabricmc:fabric-loader:${minecraftVersionDefinition['fabric']}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${minecraftVersionDefinition['fabricApi']}"
 
     // Owo config
-    // TODO Could we also include that?
-    modImplementation(annotationProcessor('io.wispforest:owo-lib:0.9.3+1.19'))
-    implementation(annotationProcessor('io.wispforest:owo-lib:0.9.3+1.19'))
+    modImplementation annotationProcessor("io.wispforest:owo-lib:${minecraftVersionDefinition['owo']}") { exclude group: 'net.fabricmc.fabric-api' }
+    // We could include owo-sentinel for auto download, see https://github.com/wisp-forest/owo-lib
+
     // Custom portal api
-    modImplementation(include('net.kyrptonaught:customportalapi:0.0.1-beta54-1.19'))
-    modImplementation(include('net.kyrptonaught:cpa-polymer:1.0.0-1.19'))
-    modImplementation(include('eu.pb4:polymer:0.2.18+1.19.2'))
+    modImplementation include("net.kyrptonaught:customportalapi:${minecraftVersionDefinition['customportalapi']}") { exclude group: 'net.fabricmc.fabric-api' }
+    modImplementation include("eu.pb4:${minecraftVersionDefinition['polymer']}") { exclude group: 'net.fabricmc.fabric-api' }
 }
 
-loom {
-    interfaceInjection {
-        enableDependencyInterfaceInjection = true
-    }
-}
-
+def buildJarFile = file("build/libs/${rootProject.name}-${project.version}.jar")
 modrinth {
     projectId = rootProject.name
     versionNumber = project.version
     versionType = project.version.contains('SNAPSHOT') ? 'alpha' : 'release'
-    gameVersions = minecraftVersionDefinition['supportedVersions']
+    gameVersions = [minecraftVersion]
     loaders = ['fabric']
     dependencies {
         required.project 'fabric-api'
         required.project 'owo-lib'
     }
-    uploadFile = remapJar
+    if(buildJarFile.exists())
+        uploadFile = buildJarFile;
+    else
+        uploadFile = remapJar
     syncBodyFrom = rootProject.file("README.md").text
 
     // Use the environment variable `$MODRINTH_TOKEN` for the token
@@ -139,7 +72,7 @@ tasks.modrinth.dependsOn(tasks.modrinthSyncBody)
 processResources {
     var replaceProperties = [
             version  : project.version,
-            minecraft: minecraftVersionDefinition['minecraft'],
+            minecraft: minecraftVersion,
             mappings : minecraftVersionDefinition['mappings'],
             fabric   : minecraftVersionDefinition['fabric'],
             fabricApi: minecraftVersionDefinition['fabricApi']

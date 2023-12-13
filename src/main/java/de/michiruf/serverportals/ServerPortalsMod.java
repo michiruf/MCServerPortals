@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.kyrptonaught.customportalapi.api.CustomPortalBuilder;
 import net.kyrptonaught.customportalapi.util.SHOULDTP;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,9 @@ public class ServerPortalsMod implements DedicatedServerModInitializer, ClientMo
     private void registerPortals() {
         for (var portal : CONFIG.portals()) {
             CustomPortalBuilder.beginPortal()
+                    // It is essential to set this id since 0.0.1-beta63-1.19.3
+                    // TODO May this version work now on older minecraft target versions aswell?
+                    .destDimID(Identifier.of("serverportals", "undefined"))
                     .frameBlock(portal.frameBlock())
                     .lightWithItem(portal.lightWithItem())
                     .tintColor(portal.color())
