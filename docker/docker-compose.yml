@@ -7,14 +7,13 @@ mc:
     EULA: 'true'
     OVERRIDE_SERVER_PROPERTIES: 'true'
     TYPE: FABRIC
-    VERSION: 1.19.3
-    MODRINTH_PROJECTS: fabric-api,owo-lib
-    MODRINTH_ALLOWED_VERSION_TYPE: alpha
-    USE_AIKAR_FLAGS: 'true'
+    VERSION: '1.20.2' # Must be string sometimes
+    MODRINTH_PROJECTS: fabric-api:0.89.3+1.20.2,owo-lib:0.11.4+1.20.2,server-portals
+    #MODRINTH_PROJECTS: fabric-api,owo-lib,server-portals
     REMOVE_OLD_MODS: 'true'
   volumes:
-    - 'mc_data:/data/'
-    - '../build/libs/:/mods/'
+    - './data/:/data/'
+    #- '../build/libs/:/mods/'
     - '/etc/timezone:/etc/timezone:ro'
   tty: true
   restart: always

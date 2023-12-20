@@ -4,7 +4,7 @@ Register serverside portals, which can be built using configured blocks, items t
 when accessed. Works with vanilla clients. If this mod is installed on the client as well, the portal frame can get
 displayed in different colors configured on the server.
 
-NOTE v1.0 - installing on a client does not work yet due to the fact, that debugging locally with non-authenticated
+NOTE v1.x - installing on a client does not work yet due to the fact, that debugging locally with non-authenticated
 clients is pretty insane. I'm currently working on a build script plugin to get local authentication to work, because
 you cannot debug like this. I'm not going to waste hours of copy pasting jars around, without a debugger attached.
 
@@ -18,17 +18,14 @@ This mod is available on [modrinth](https://modrinth.com/mod/server-portals) wit
 The project source is available on [github/michiruf](https://github.com/michiruf/MCServerPortals) with the latest
 readme [here](https://github.com/michiruf/MCServerPortals/blob/master/README.md).
 
-Internally this plugin is packed with [kyrptonaught's customportalapi](https://github.com/kyrptonaught/customportalapi),
-[kyrptonaught's CustomPortalApi-Polymer](https://github.com/kyrptonaught/CustomPortalApi-Polymer) and
-because of that with [Polymer](https://polymer.pb4.eu/).
+Internally this plugin is packed with [kyrptonaught's customportalapi](https://github.com/kyrptonaught/customportalapi) and
+[Polymer](https://polymer.pb4.eu/) to ensure vanilla compability.
 
 
 ## Usage instructions
 
-<span style="color:darkred;font-weight:bold">
-NOTE: The server must get restarted to load these changes!<br>
-So after every change of the portals, restart the server (unfortunately)!
-</span>
+**NOTE: The server must get restarted to load these changes!<br>
+So after every change of the portals, restart the server (unfortunately)!**
 
 ---
 List configured portals:
